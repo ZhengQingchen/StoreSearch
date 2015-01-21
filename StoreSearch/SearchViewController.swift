@@ -252,6 +252,8 @@ extension SearchViewController: UISearchBarDelegate {
                 }
                 dispatch_async(dispatch_get_main_queue()){
                     self.showNetworkError()
+                    self.isLoading = false
+                    self.tableView.reloadData()
                 }
             }
         }
