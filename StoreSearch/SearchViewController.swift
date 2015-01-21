@@ -13,10 +13,12 @@ class SearchViewController: UIViewController {
     
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
     
     var searchResults = [SearchResult]()
     var hasRearched = false
     var isLoading = false
+    var dataTask: NSURLSessionDataTask? 
     
     struct TableViewCellIdentifiers {
         static let searchResultCell = "SearchResultCell"
@@ -24,11 +26,14 @@ class SearchViewController: UIViewController {
         static let loadingCell = "LoadingCell"
     }
     
+    @IBAction func segmentChanged(sender: AnyObject) {
+        performSearch()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.contentInset = UIEdgeInsets(top: 64, left: 0, bottom: 0, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: 108, left: 0, bottom: 0, right: 0)
         tableView.rowHeight = 80
         
         var cellNib = UINib(nibName: TableViewCellIdentifiers.searchResultCell, bundle: nil)
@@ -49,13 +54,9 @@ class SearchViewController: UIViewController {
 
     
     
-    func urlWithSearchText(searchText:String) -> NSURL {
-        let escapedSearchText = searchText.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-        let urlString = String(format: "http://itunes.apple.com/search?term=%@&limit=200", escapedSearchText)
-        let url = NSURL(string: urlString)
-        return url!
-    }
+   
     
+    // MARK: - ParesJSON...
     
     func paresJSON(data:NSData) -> [String:AnyObject]?{
         var error: NSError?
@@ -185,22 +186,6 @@ class SearchViewController: UIViewController {
     }
     
     
-    func kindForDisplay(kind:String) ->String {
-        switch kind {
-        case "album": return "Album"
-        case "audiobook": return "Audio Book"
-        case "book": return "Book"
-        case "ebook": return "E-Book"
-        case "feature-movie": return "Movie"
-        case "music-video": return "Music Video"
-        case "podcast": return "Podcast"
-        case "software": return "App"
-        case "song": return "Song"
-        case "tv-episode": return "TV Episode"
-        default: return kind
-        }
-    }
-    
     func showNetworkError(){
         let alert = UIAlertController(title: "Whoops...", message: "There was an error reading from the iTunes Store.Please try again.", preferredStyle: .Alert)
         let action = UIAlertAction(title: "OK", style: .Default, handler: nil)
@@ -208,24 +193,47 @@ class SearchViewController: UIViewController {
         
         presentViewController(alert, animated: true, completion: nil)
     }
-}
-
-extension SearchViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+    
+    // MARK: - URL func
+    
+    func urlWithSearchText(searchText:String,category:Int) -> NSURL {
+        
+        var entityName:String
+        
+        switch category{
+        case 1: entityName = "musicTrack"
+        case 2: entityName = "software"
+        case 3: entityName = "ebook"
+        default: entityName = ""
+        }
+        
+        let escapedSearchText = searchText.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+        let urlString = String(format: "http://itunes.apple.com/search?term=%@&limit=200&entity=%@", escapedSearchText,entityName)
+        let url = NSURL(string: urlString)
+        return url!
+    }
+    
+    
+    
+    func performSearch() {
         if !searchBar.text.isEmpty{
             searchBar.resignFirstResponder()
             
             isLoading = true
+            dataTask?.cancel()
             tableView.reloadData()
             
             hasRearched = true
             searchResults = [SearchResult]()
             
-            let url = self.urlWithSearchText(searchBar.text)
+            let url = self.urlWithSearchText(searchBar.text,category: segmentedControl.selectedSegmentIndex)
+            
             let session = NSURLSession.sharedSession()
-            let dataTask = session.dataTaskWithURL(url, completionHandler: {
+            dataTask = session.dataTaskWithURL(url, completionHandler: {
                 data, response, error in
+                
                 if let error = error {
+                    if error.code == -999 {return}
                     println("Failure! \(error)")
                 }else if let httpResponse = response as? NSHTTPURLResponse{
                     if httpResponse.statusCode == 200 {
@@ -249,14 +257,21 @@ extension SearchViewController: UISearchBarDelegate {
                     self.showNetworkError()
                 })
             })
-            dataTask.resume()
+            dataTask?.resume()
         }
+
+    }
+}
+// MARK: - SearchBarDelegate
+extension SearchViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        performSearch()
     }
     func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
         return UIBarPosition.TopAttached
     }
 }
-
+// MARK: - TableViewDataSource
 extension SearchViewController: UITableViewDataSource {
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isLoading {
@@ -282,17 +297,13 @@ extension SearchViewController: UITableViewDataSource {
             let  cell = tableView.dequeueReusableCellWithIdentifier(TableViewCellIdentifiers.searchResultCell, forIndexPath: indexPath) as SearchResultCell
             let searchResult = searchResults[indexPath.row]
             
-            cell.nameLable.text = searchResult.name
-            if searchResult.artistName.isEmpty {
-                cell.artistNameLable.text = "Unknow"
-            }else{
-                cell.artistNameLable.text = String(format: "%@ (%@)",searchResult.artistName,kindForDisplay(searchResult.kind))
-            }
-            
+            cell.configureForSearchResult(searchResult)
+
             return cell
         }
     }
 }
+// MARK:- TableViewDelegate
 extension SearchViewController:UITableViewDelegate {
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
