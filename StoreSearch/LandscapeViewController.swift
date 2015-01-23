@@ -13,7 +13,7 @@ class LandscapeViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var pageControl: UIPageControl!
     
-    var searchResults = [SearchResult]()
+    var search: Search!
     private var firstTime = true
     private var downloadTasks = [NSURLSessionDownloadTask]()
     
@@ -55,10 +55,11 @@ class LandscapeViewController: UIViewController {
         
         if firstTime {
             firstTime = false
-            if searchResults.count == 0 {
-                nothingFoundLable()
-            }else{
-                tileButtons(searchResults)
+            switch search.state {
+            case .NotSearchYet,.Loading,.NoResults:
+                break
+            case .Results(let list):
+                tileButtons(list)
             }
         }
         
