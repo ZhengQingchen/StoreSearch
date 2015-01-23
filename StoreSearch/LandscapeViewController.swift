@@ -56,8 +56,12 @@ class LandscapeViewController: UIViewController {
         if firstTime {
             firstTime = false
             switch search.state {
-            case .NotSearchYet,.Loading,.NoResults:
+            case .NotSearchYet:
                 break
+            case .Loading:
+                showSpinner()
+            case .NoResults:
+                showNothingFoundLable()
             case .Results(let list):
                 tileButtons(list)
             }
@@ -120,6 +124,8 @@ class LandscapeViewController: UIViewController {
             button.frame = CGRect(x: x + paddingHorz,
                                   y: marginY + CGFloat(row) * itemHeight + paddingVert,
                               width: buttonWidth, height: buttonHeight)
+            button.tag = 2000 + index
+            button.addTarget(self, action: Selector("buttonPressed:"), forControlEvents: .TouchUpInside)
             downloadImageForSearchResult(searchResult, andPlaceOnButton: button)
             
             scrollView.addSubview(button)
@@ -145,21 +151,25 @@ class LandscapeViewController: UIViewController {
         
         pageControl.numberOfPages = numPage
         pageControl.currentPage = 0
-        
-        println("Number of pages : \(numPage)")
-        println("Number of count of result: \(searchResults.count)")
     }
     
-    private func nothingFoundLable() {
-        let lable:UILabel = UILabel()
+    func buttonPressed(sender:UIButton) {
+        performSegueWithIdentifier("ShowDetail", sender: sender)
+    }
+    
+    private func showNothingFoundLable() {
+        let lable = UILabel(frame: CGRect.zeroRect)
         lable.text = "Nothing Found!"
         lable.textColor = UIColor.whiteColor()
+        lable.backgroundColor = UIColor.clearColor()
         lable.sizeToFit()
         
-        lable.frame = CGRect(x: scrollView.bounds.size.width/2 - lable.frame.size.width/2 ,
-            y: scrollView.bounds.size.height/2 - lable.frame.height/2,
-            width: 100, height: 44)
-        lable.sizeToFit()
+        var rect = lable.frame
+        rect.size.width = ceil(rect.size.width/2)*2
+        rect.size.height = ceil(rect.size.height/2)*2
+        lable.frame = rect
+        
+        lable.center = CGPoint(x: CGRectGetMidX(scrollView.bounds), y: CGRectGetMidY(scrollView.bounds))
         
         scrollView.addSubview(lable)
     }
@@ -184,6 +194,41 @@ class LandscapeViewController: UIViewController {
             })
             downTask.resume()
             downloadTasks.append(downTask)
+        }
+    }
+    private func showSpinner() {
+        let spinner = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+        spinner.center = CGPoint(x: CGRectGetMidX(scrollView.bounds), y: CGRectGetMidY(scrollView.bounds))
+        spinner.tag = 1000
+        view.addSubview(spinner)
+        spinner.startAnimating()
+    }
+    
+    func searchResultsReceived(){
+        hideSpinner()
+        
+        switch search.state {
+        case .NotSearchYet,.Loading,.NoResults:
+            break
+        case .Results(let list):
+            tileButtons(list)
+        }
+    }
+    
+    private func hideSpinner(){
+        view.viewWithTag(1000)?.removeFromSuperview()
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "ShowDetail" {
+            switch search.state {
+            case .Results(let list):
+                let detailViewController = segue.destinationViewController as DetailViewController
+                let searchResult = list[sender!.tag - 2000]
+                detailViewController.searchResult = searchResult
+            default:
+                break
+            }
         }
     }
 }
