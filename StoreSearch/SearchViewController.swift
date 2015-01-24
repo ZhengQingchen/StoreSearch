@@ -61,7 +61,6 @@ class SearchViewController: UIViewController {
         presentViewController(alert, animated: true, completion: nil)
     }
     
-    // MARK: - URL func
     
     func performSearch() {
         if let catagory = Search.Category(rawValue: segmentedControl.selectedSegmentIndex) {
@@ -75,7 +74,9 @@ class SearchViewController: UIViewController {
                     controller.searchResultsReceived()
                 }
             })
-            tableView.reloadData()
+            if !searchBar.text.isEmpty {
+                tableView.reloadData()
+            }
             searchBar.resignFirstResponder()
         } 
     }
