@@ -91,6 +91,7 @@ class Search {
             println("Unknow JSON Error")
         }
         return nil
+        
     }
     
     private func paresDictionary(dictionary:[String:AnyObject]) -> [SearchResult]{
