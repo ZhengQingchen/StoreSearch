@@ -18,6 +18,7 @@ class SearchViewController: UIViewController {
     let search = Search()
     
     var landscapeViewController: LandscapeViewController?
+    var didAnimateCell:[NSIndexPath:Bool] = [:]
     
     
     struct TableViewCellIdentifiers {
@@ -38,6 +39,7 @@ class SearchViewController: UIViewController {
         
         var cellNib = UINib(nibName: TableViewCellIdentifiers.searchResultCell, bundle: nil)
         tableView.registerNib(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.searchResultCell)
+        
         cellNib = UINib(nibName: TableViewCellIdentifiers.nothingFoundCell, bundle: nil)
         tableView.registerNib(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.nothingFoundCell)
         
@@ -147,10 +149,8 @@ class SearchViewController: UIViewController {
             hideLandscapeViewWithCoordinator(coordinator)
         }
     }
-    
-    
-    
 }
+
 // MARK: - SearchBarDelegate
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
@@ -160,6 +160,7 @@ extension SearchViewController: UISearchBarDelegate {
         return UIBarPosition.TopAttached
     }
 }
+
 // MARK: - TableViewDataSource
 extension SearchViewController: UITableViewDataSource {
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -190,6 +191,11 @@ extension SearchViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCellWithIdentifier(TableViewCellIdentifiers.searchResultCell, forIndexPath: indexPath) as SearchResultCell
             let searchResult = list[indexPath.row]
             cell.configureForSearchResult(searchResult)
+            
+            if didAnimateCell[indexPath] == nil || didAnimateCell[indexPath]! == false {
+                didAnimateCell[indexPath] = true
+                TipInCellAnimator.animate(cell)
+            }
             return cell
         }
     }

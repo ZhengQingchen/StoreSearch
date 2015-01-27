@@ -94,10 +94,11 @@ class DetailViewController: UIViewController {
     }
     
     deinit{
-        println("deinit \(self)")
         downloadTask?.cancel()
     }
 }
+
+// MARK: - UIViewControllerTransitioningDelegate
 
 extension DetailViewController: UIViewControllerTransitioningDelegate {
     func presentationControllerForPresentedViewController(presented: UIViewController, presentingViewController presenting: UIViewController!, sourceViewController source: UIViewController) -> UIPresentationController? {
@@ -118,6 +119,8 @@ extension DetailViewController: UIViewControllerTransitioningDelegate {
         }
     }
 }
+
+// MARK: - UIGestureRecognizerDelegate
 
 extension DetailViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
