@@ -108,6 +108,7 @@
 		04C7867D1A6DE60F00E03A2A /* StoreSearch */ = {
 			isa = PBXGroup;
 			children = (
+				04C786801A6DE60F00E03A2A /* AppDelegate.swift */,
 				04CBED1F1A75E26400E500CF /* Model */,
 				04CBED201A75E2D500E500CF /* View */,
 				04CBED211A75E30E00E500CF /* Controller */,
@@ -117,7 +118,6 @@
 				0432381E1A6F3407006BD030 /* LoadingCell.xib */,
 				04CBED251A75F1B800E500CF /* NothingFoundCell.xib */,
 				04C786B31A6E097500E03A2A /* SearchResultCell.xib */,
-				04C786801A6DE60F00E03A2A /* AppDelegate.swift */,
 				04C7867E1A6DE60F00E03A2A /* Supporting Files */,
 			);
 			path = StoreSearch;

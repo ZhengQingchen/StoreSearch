@@ -47,6 +47,8 @@ class SearchViewController: UIViewController {
         tableView.registerNib(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.loadingCell)
         
         searchBar.becomeFirstResponder()
+      
+
     }
 
     override func didReceiveMemoryWarning() {
