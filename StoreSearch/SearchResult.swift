@@ -18,6 +18,7 @@ class SearchResult {
     var currency = ""
     var price = 0.0
     var genre = ""
+    var imageView : Dictionary<NSURL,UIImage> = [:]
     
     func kindForDisplay() ->String {
         switch kind {

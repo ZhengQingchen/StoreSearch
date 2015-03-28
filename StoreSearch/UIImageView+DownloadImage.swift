@@ -2,7 +2,7 @@
 //  UIImageView+DownloadImage.swift
 //  StoreSearch
 //
-//  Created by mac on 15/1/21.
+///Users/mac/Downloads/HanekeSwift-master/Haneke.xcodeproj  Created by mac on 15/1/21.
 //  Copyright (c) 2015年 mac. All rights reserved.
 //
 
@@ -25,6 +25,8 @@ extension UIImageView {
                 }
             }
         })
+        
+        
         
         downloadTask.resume()
         return downloadTask

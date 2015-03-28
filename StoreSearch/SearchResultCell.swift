@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Haneke
 
 class SearchResultCell: UITableViewCell {
     
@@ -52,8 +53,22 @@ class SearchResultCell: UITableViewCell {
         
         artworkImageView.image = UIImage (named: "Placeholder")
         if let url = NSURL(string: searchResult.artworkURL60){
-            downloadTask = artworkImageView.loadImageWithURL(url)
+            
+            artworkImageView.sd_setImageWithURL(url)
+//            downloadTask = artworkImageView.loadImageWithURL(url)
+//            println(artworkImageView.image?.description)
+            
+//            searchResult.imageView = [url:artworkImageView.image]
+            
+            
+//            artworkImageView.hnk_setImageFromURL(url)
         }
+        
+//        [cell.imageView sd_setImageWithURL:[NSURL URLWithString:@"http://www.domain.com/path/to/image.jpg"]
+//            placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+        
+        
+        
     }
     
     }

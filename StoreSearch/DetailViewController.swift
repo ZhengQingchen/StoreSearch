@@ -42,6 +42,8 @@ class DetailViewController: UIViewController {
     
     @IBAction func openInStore(sender: AnyObject) {
         if let url = NSURL(string: searchResult.storeURL){
+            
+//            println("\(url)")
             UIApplication.sharedApplication().openURL(url)
         }
     }
@@ -58,7 +60,7 @@ class DetailViewController: UIViewController {
         gestureRecognizer.delegate = self
         view.addGestureRecognizer(gestureRecognizer)
         if searchResult != nil{
-            upgateUI()
+             upgateUI()
         }
     }
     
@@ -89,7 +91,9 @@ class DetailViewController: UIViewController {
         priceButton.setTitle(priceText, forState: .Normal)
             
         if let url = NSURL(string: searchResult.artworkURL100) {
-            downloadTask = artworkImageView.loadImageWithURL(url)
+            artworkImageView.sd_setImageWithURL(url)
+            
+//            downloadTask = artworkImageView.loadImageWithURL(url)
         }
     }
     
@@ -109,7 +113,7 @@ extension DetailViewController: UIViewControllerTransitioningDelegate {
     func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return BounceAnimationController()
     }
-    
+
     func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         switch dismissAnimationStyle {
         case .Slide :

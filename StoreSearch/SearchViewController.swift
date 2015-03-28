@@ -7,6 +7,7 @@
 //
 
 import UIKit
+//import SDWebImage
 
 class SearchViewController: UIViewController {
 
@@ -198,6 +199,7 @@ extension SearchViewController: UITableViewDataSource {
                 didAnimateCell[indexPath] = true
                 TipInCellAnimator.animate(cell)
             }
+            
             return cell
         }
     }
