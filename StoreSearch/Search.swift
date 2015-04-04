@@ -34,6 +34,9 @@ class Search {
             let url = self.urlWithSearchText(text,category:category)
         
             let session = NSURLSession.sharedSession()
+            
+
+            
             dataTask = session.dataTaskWithURL(url, completionHandler: {
                 data, response, error in
                 
@@ -62,6 +65,7 @@ class Search {
                 dispatch_async(dispatch_get_main_queue()){
                     UIApplication.sharedApplication().networkActivityIndicatorVisible = false
                     completion(success)
+                    
                 }
                 })
             

@@ -7,10 +7,9 @@
 //
 
 import UIKit
-//import SDWebImage
 
 class SearchViewController: UIViewController {
-
+    
     
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
@@ -48,16 +47,10 @@ class SearchViewController: UIViewController {
         tableView.registerNib(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.loadingCell)
         
         searchBar.becomeFirstResponder()
-      
-
+        
+        
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-       
+    
     func showNetworkError(){
         let alert = UIAlertController(title: "Whoops...", message: "There was an error reading from the iTunes Store.Please try again.", preferredStyle: .Alert)
         let action = UIAlertAction(title: "OK", style: .Default, handler: nil)
@@ -83,7 +76,7 @@ class SearchViewController: UIViewController {
                 tableView.reloadData()
             }
             searchBar.resignFirstResponder()
-        } 
+        }
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -98,7 +91,7 @@ class SearchViewController: UIViewController {
         }
     }
     
-     // MARK: - LandscapeViewController
+    // MARK: - LandscapeViewController
     
     func showLandscapeViewWithCoordinator(coordinator:UIViewControllerTransitionCoordinator) {
         precondition(landscapeViewController == nil)
@@ -119,8 +112,8 @@ class SearchViewController: UIViewController {
                 if self.presentationController != nil {
                     self.dismissViewControllerAnimated(true, completion: nil)
                 }
-            }, completion: { _ in
-                controller.didMoveToParentViewController(self)
+                }, completion: { _ in
+                    controller.didMoveToParentViewController(self)
             })
         }
     }
@@ -131,13 +124,13 @@ class SearchViewController: UIViewController {
             
             coordinator.animateAlongsideTransition({ _ in
                 controller.view.alpha = 0
-            }, completion: { _ in
-                controller.view.removeFromSuperview()
-                controller.removeFromParentViewController()
-                self.landscapeViewController = nil
-                if self.presentedViewController != nil {
-                    self.dismissViewControllerAnimated(true, completion: nil)
-                }
+                }, completion: { _ in
+                    controller.view.removeFromSuperview()
+                    controller.removeFromParentViewController()
+                    self.landscapeViewController = nil
+                    if self.presentedViewController != nil {
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                    }
             })
         }
     }
